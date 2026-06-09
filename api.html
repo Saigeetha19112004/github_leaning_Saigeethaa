@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyTorch Academy — Master Deep Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #16161f;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0eff8;
+    --muted: #8a899f;
+    --accent: #ee4b2b;
+    --accent2: #ff7c5c;
+    --orange: #f97316;
+    --blue: #3b82f6;
+    --green: #22c55e;
+    --purple: #a855f7;
+    --yellow: #eab308;
+    --cyan: #06b6d4;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 60px;
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 800;
+    color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 13px; color: var(--muted); text-decoration: none;
+    font-family: var(--font-mono); letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent); color: white;
+    padding: 7px 18px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    font-family: var(--font-display);
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(238,75,43,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(59,130,246,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse 30% 30% at 20% 60%, rgba(168,85,247,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(238,75,43,0.12); border: 1px solid rgba(238,75,43,0.3);
+    padding: 6px 16px; border-radius: 100px;
+    font-size: 12px; font-family: var(--font-mono); color: var(--accent2);
+    margin-bottom: 2rem;
+    animation: fadeDown 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    animation: fadeUp 0.7s ease 0.1s both;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 .torch { color: var(--accent); position: relative; }
+  .hero h1 .torch::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--orange));
+    border-radius: 2px;
+  }
+  .hero-sub {
+    max-width: 560px;
+    color: var(--muted); font-size: 18px; line-height: 1.6;
+    animation: fadeUp 0.7s ease 0.2s both;
+    margin-bottom: 2.5rem;
+  }
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s ease 0.3s both;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white; padding: 14px 32px; border-radius: 8px;
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    text-decoration: none; transition: all 0.2s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text); padding: 14px 32px; border-radius: 8px;
+    font-family: var(--font-display); font-size: 15px; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+    border: 1px solid var(--border2);
+    cursor: pointer;
+  }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem;
+    animation: fadeUp 0.7s ease 0.4s both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+    color: var(--text);
+  }
+  .stat-label { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* ── SECTIONS ── */
+  section { padding: 5rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .section-desc { color: var(--muted); max-width: 540px; font-size: 16px; }
+
+  /* ── CURRICULUM ── */
+  #curriculum { background: var(--bg); }
+  .curriculum-grid { display: flex; flex-direction: column; gap: 2px; margin-top: 3rem; }
+
+  .level-header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .level-header:hover { background: #1c1c28; }
+  .level-badge {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 100px; letter-spacing: 0.1em;
+  }
+  .badge-beginner { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+  .badge-intermediate { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+  .badge-advanced { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
+  .badge-expert { background: rgba(238,75,43,0.15); color: #ee4b2b; border: 1px solid rgba(238,75,43,0.3); }
+
+  .level-title {
+    font-family: var(--font-display); font-size: 18px; font-weight: 700; flex: 1;
+  }
+  .level-meta { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+  .level-arrow { color: var(--muted); font-size: 18px; transition: transform 0.3s; }
+  .level-open .level-arrow { transform: rotate(180deg); }
+
+  .level-content {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 12px 12px;
+    overflow: hidden;
+    max-height: 0; transition: max-height 0.4s ease;
+  }
+  .level-content.open { max-height: 2000px; }
+
+  .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; }
+  .module-card {
+    padding: 1.5rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .module-card:hover { background: rgba(255,255,255,0.03); }
+  .module-num {
+    font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .module-name {
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .module-topics { font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .module-icon {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    font-size: 20px; opacity: 0.4;
+  }
+  .module-card:hover .module-icon { opacity: 0.7; }
+
+  /* ── LEARNING PATHS ── */
+  #paths { background: var(--bg2); }
+  .paths-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .path-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .path-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .path-card.path-ml::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+  .path-card.path-cv::before { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+  .path-card.path-nlp::before { background: linear-gradient(90deg, var(--orange), var(--accent)); }
+  .path-card.path-rl::before { background: linear-gradient(90deg, var(--yellow), var(--green)); }
+  .path-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+
+  .path-emoji { font-size: 2rem; margin-bottom: 1rem; }
+  .path-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 0.5rem; }
+  .path-desc { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
+  .path-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .path-tag {
+    font-size: 11px; font-family: var(--font-mono);
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 100px; color: var(--muted);
+  }
+
+  /* ── CODE PLAYGROUND ── */
+  #playground { background: var(--bg); }
+  .playground-wrap {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 3rem;
+  }
+  .playground-header {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .playground-tabs { display: flex; gap: 0.5rem; }
+  .pg-tab {
+    font-family: var(--font-mono); font-size: 12px;
+    padding: 6px 16px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    transition: all 0.2s;
+  }
+  .pg-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .pg-tab:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+  .playground-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .code-area {
+    padding: 1.5rem;
+    font-family: var(--font-mono); font-size: 13px;
+    line-height: 1.75;
+    border-right: 1px solid var(--border);
+  }
+  .code-area pre {
+    color: var(--text);
+    white-space: pre-wrap; word-break: break-word;
+    overflow-x: auto;
+  }
+  .code-area .kw { color: #ff79c6; }
+  .code-area .fn { color: #50fa7b; }
+  .code-area .str { color: #f1fa8c; }
+  .code-area .cm { color: #6272a4; }
+  .code-area .num { color: #bd93f9; }
+  .code-area .cls { color: #8be9fd; }
+  .output-area { padding: 1.5rem; background: rgba(0,0,0,0.3); }
+  .output-label { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 1rem; letter-spacing: 0.1em; }
+  .output-content { font-family: var(--font-mono); font-size: 13px; line-height: 1.75; color: #50fa7b; }
+  .output-vis { margin-top: 1rem; }
+  .tensor-grid {
+    display: grid; gap: 2px; width: fit-content;
+  }
+  .tensor-row { display: flex; gap: 2px; }
+  .tensor-cell {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 4px; font-family: var(--font-mono); font-size: 11px;
+    font-weight: 700; transition: transform 0.2s;
+  }
+  .tensor-cell:hover { transform: scale(1.2); z-index: 1; }
+
+  /* ── CHEATSHEET ── */
+  #cheatsheet { background: var(--bg2); }
+  .cheat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .cheat-card {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden;
+  }
+  .cheat-header {
+    background: var(--bg2); padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cheat-icon { font-size: 16px; }
+  .cheat-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+  .cheat-body { padding: 1.25rem; }
+  .cheat-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    gap: 1rem;
+  }
+  .cheat-row:last-child { border-bottom: none; }
+  .cheat-desc { font-size: 12px; color: var(--muted); flex: 1; }
+  .cheat-code {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--accent2); background: rgba(238,75,43,0.08);
+    padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+  }
+
+  /* ── TOPICS ── */
+  #topics { background: var(--bg); }
+  .topics-mega { margin-top: 3rem; }
+  .topic-section { margin-bottom: 3rem; }
+  .topic-section-title {
+    font-family: var(--font-display); font-size: 20px; font-weight: 700;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .topic-section-title span { color: var(--muted); font-size: 14px; font-weight: 400; }
+  .topics-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+  .topic-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.75rem 1rem;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; cursor: pointer;
+    transition: all 0.2s; font-size: 13px;
+  }
+  .topic-item:hover { border-color: var(--border2); background: #1c1c28; transform: translateX(4px); }
+  .topic-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg2); border-top: 1px solid var(--border);
+    padding: 3rem 2rem; text-align: center;
+    color: var(--muted); font-size: 13px; font-family: var(--font-mono);
+  }
+  footer strong { color: var(--accent); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 16px; max-width: 640px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal-header {
+    padding: 1.5rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .modal-close {
+    background: none; border: none; color: var(--muted); font-size: 20px;
+    cursor: pointer; padding: 0; line-height: 1;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 1.5rem; }
+  .modal-body h4 { font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 0.75rem; color: var(--muted); letter-spacing: 0.05em; }
+  .modal-topics li { font-size: 14px; line-height: 2; list-style: none; padding-left: 1.25rem; position: relative; }
+  .modal-topics li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-family: var(--font-mono); font-size: 12px; }
+  .modal-code {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.25rem;
+    font-family: var(--font-mono); font-size: 12px; line-height: 1.75;
+    margin-top: 1rem; overflow-x: auto;
+  }
+
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .playground-body { grid-template-columns: 1fr; }
+    .code-area { border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span class="logo-dot"></span> PyTorch Academy</div>
+  <div class="nav-links">
+    <a href="#curriculum">Curriculum</a>
+    <a href="#paths">Paths</a>
+    <a href="#playground">Playground</a>
+    <a href="#cheatsheet">Cheatsheet</a>
+    <a href="#topics">All Topics</a>
+  </div>
+  <a href="#curriculum" class="nav-cta">Start Learning →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge">🔥 Zero to Pro · Complete PyTorch Curriculum</div>
+  <h1>Master <span class="torch">PyTorch</span><br>From Zero.</h1>
+  <p class="hero-sub">The complete deep learning curriculum — tensors to transformers, research-grade code, and production deployment. No fluff.</p>
+  <div class="hero-actions">
+    <a href="#curriculum" class="btn-primary">Begin Curriculum</a>
+    <a href="#playground" class="btn-outline">Try Playground</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">// modules</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">80+</div>
+      <div class="stat-label">// topics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">// levels</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">// potential</div>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section id="curriculum">
+  <div class="container">
+    <p class="section-label">// structured learning</p>
+    <h2 class="section-title">The Complete Curriculum</h2>
+    <p class="section-desc">Four levels, twelve modules. Click any level to expand, then a module to see full topic details and code examples.</p>
+
+    <div class="curriculum-grid" id="curriculumGrid"></div>
+  </div>
+</section>
+
+<!-- LEARNING PATHS -->
+<section id="paths">
+  <div class="container">
+    <p class="section-label">// specializations</p>
+    <h2 class="section-title">Choose Your Path</h2>
+    <p class="section-desc">After the fundamentals, specialize in a domain that aligns with your goals.</p>
+    <div class="paths-grid">
+      <div class="path-card path-ml">
+        <div class="path-emoji">🧠</div>
+        <div class="path-title">Classic ML & Tabular</div>
+        <div class="path-desc">Deep dive into MLPs, gradient boosting hybrids, feature engineering, and structured data pipelines with PyTorch.</div>
+        <div class="path-tags">
+          <span class="path-tag">MLPs</span>
+          <span class="path-tag">Tabular</span>
+          <span class="path-tag">Feature Engineering</span>
+          <span class="path-tag">Ensembles</span>
+        </div>
+      </div>
+      <div class="path-card path-cv">
+        <div class="path-emoji">👁️</div>
+        <div class="path-title">Computer Vision</div>
+        <div class="path-desc">CNNs, object detection (YOLO, DETR), segmentation, image generation, and vision transformers (ViT).</div>
+        <div class="path-tags">
+          <span class="path-tag">CNNs</span>
+          <span class="path-tag">ResNet/EfficientNet</span>
+          <span class="path-tag">DETR</span>
+          <span class="path-tag">Diffusion</span>
+        </div>
+      </div>
+      <div class="path-card path-nlp">
+        <div class="path-emoji">💬</div>
+        <div class="path-title">NLP & LLMs</div>
+        <div class="path-desc">From word embeddings to building and fine-tuning transformers. BERT, GPT architecture, LoRA, RLHF and beyond.</div>
+        <div class="path-tags">
+          <span class="path-tag">Transformers</span>
+          <span class="path-tag">BERT/GPT</span>
+          <span class="path-tag">LoRA</span>
+          <span class="path-tag">RLHF</span>
+        </div>
+      </div>
+      <div class="path-card path-rl">
+        <div class="path-emoji">🎮</div>
+        <div class="path-title">Reinforcement Learning</div>
+        <div class="path-desc">Policy gradients, DQN, PPO, actor-critic methods, multi-agent RL and training game-playing agents.</div>
+        <div class="path-tags">
+          <span class="path-tag">DQN</span>
+          <span class="path-tag">PPO</span>
+          <span class="path-tag">Actor-Critic</span>
+          <span class="path-tag">Multi-Agent</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYGROUND -->
+<section id="playground">
+  <div class="container">
+    <p class="section-label">// interactive</p>
+    <h2 class="section-title">Code Playground</h2>
+    <p class="section-desc">Study annotated PyTorch examples — from tensor basics to neural networks. Switch tabs to explore each concept.</p>
+
+    <div class="playground-wrap">
+      <div class="playground-header">
+        <div class="playground-tabs" id="pgTabs"></div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--muted);">Python 3 · PyTorch 2.x</div>
+      </div>
+      <div class="playground-body">
+        <div class="code-area"><pre id="codeDisplay"></pre></div>
+        <div class="output-area">
+          <div class="output-label">OUTPUT &amp; VISUALIZATION</div>
+          <div class="output-content" id="outputText"></div>
+          <div class="output-vis" id="outputVis"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHEATSHEET -->
+<section id="cheatsheet">
+  <div class="container">
+    <p class="section-label">// quick reference</p>
+    <h2 class="section-title">PyTorch Cheatsheet</h2>
+    <p class="section-desc">The essential API reference you'll return to again and again.</p>
+    <div class="cheat-grid" id="cheatGrid"></div>
+  </div>
+</section>
+
+<!-- ALL TOPICS -->
+<section id="topics">
+  <div class="container">
+    <p class="section-label">// full index</p>
+    <h2 class="section-title">All Topics</h2>
+    <p class="section-desc">Every concept covered in this curriculum. Click any topic to jump into it.</p>
+    <div class="topics-mega" id="topicsMega"></div>
+  </div>
+</section>
+
+<footer>
+  <div>Built for deep learning mastery · <strong>PyTorch Academy</strong> · Tap any module to explore · Press on 🔥</div>
+</footer>
+
+<!-- MODULE MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="module-num" id="modalNum"></div>
+        <div class="module-name" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="modalName"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <h4>TOPICS COVERED</h4>
+      <ul class="modal-topics" id="modalTopics"></ul>
+      <div class="modal-code" id="modalCode"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const curriculum = [
+  {
+    level: "Beginner",
+    badge: "badge-beginner",
+    color: "#22c55e",
+    duration: "2–3 weeks",
+    modules: [
+      {
+        num: "01",
+        name: "Python & Math Foundations",
+        icon: "📐",
+        topics: ["NumPy arrays & broadcasting", "Linear algebra — vectors, matrices, dot products", "Calculus — derivatives, chain rule (manual)", "Probability basics — distributions, expectations", "Python classes & OOP refresher"],
+        code: `import numpy as np
+
+# Linear algebra basics that PyTorch mirrors
+A = np.array([[1, 2], [3, 4]])
+v = np.array([1, 0])
+
+# Matrix-vector product
+result = A @ v  # array([1, 3])
+
+# Gradient of f(x) = x² manually
+x = 3.0
+grad = 2 * x  # df/dx = 2x = 6.0
+
+print(f"Av = {result}")
+print(f"∂f/∂x at x=3: {grad}")`
+      },
+      {
+        num: "02",
+        name: "Tensors — The Core Abstraction",
+        icon: "🔢",
+        topics: ["Creating tensors: zeros, ones, rand, arange", "Tensor dtypes — float32, int64, bool", "Device management — CPU vs CUDA", "Reshaping: view, reshape, squeeze, unsqueeze", "Indexing & slicing", "Broadcasting rules", "In-place vs out-of-place ops"],
+        code: `import torch
+
+# Creating tensors
+x = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+z = torch.zeros(3, 4)
+r = torch.randn(2, 3)  # N(0,1)
+
+# Move to GPU if available
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+x = x.to(device)
+
+# Reshape operations
+flat = x.view(-1)       # [1,2,3,4]
+col  = x.unsqueeze(0)  # shape: [1,2,2]
+
+# Broadcasting: (3,1) + (1,4) → (3,4)
+a = torch.ones(3, 1)
+b = torch.ones(1, 4)
+c = a + b  # shape [3,4] — auto broadcast
+
+print(x.shape, x.dtype, x.device)`
+      },
+      {
+        num: "03",
+        name: "Autograd — Automatic Differentiation",
+        icon: "⚡",
+        topics: ["requires_grad and gradient tracking", "The computation graph explained", "loss.backward() — backprop in one line", "Accessing .grad attributes", "torch.no_grad() — inference mode", "Gradient accumulation gotchas", "Manual vs automatic gradients"],
+        code: `import torch
+
+# Autograd tracks every operation
+x = torch.tensor(3.0, requires_grad=True)
+y = x ** 2 + 2 * x + 1  # y = (x+1)²
+
+# One call to compute ALL gradients
+y.backward()
+print(x.grad)  # dy/dx = 2x+2 = 8.0
+
+# Multi-variable: partial derivatives
+a = torch.tensor(2.0, requires_grad=True)
+b = torch.tensor(3.0, requires_grad=True)
+loss = a**2 * b + b**3
+
+loss.backward()
+print(a.grad)  # ∂loss/∂a = 2ab = 12
+print(b.grad)  # ∂loss/∂b = a²+3b² = 31
+
+# Disable for inference (2x speedup)
+with torch.no_grad():
+    pred = x ** 2  # no graph built`
+      }
+    ]
+  },
+  {
+    level: "Intermediate",
+    badge: "badge-intermediate",
+    color: "#eab308",
+    duration: "3–4 weeks",
+    modules: [
+      {
+        num: "04",
+        name: "Building Neural Networks with nn.Module",
+        icon: "🏗️",
+        topics: ["nn.Module — the base class for everything", "Defining forward() correctly", "nn.Linear, nn.Conv2d, nn.LSTM layers", "Sequential vs functional vs module style", "Parameters, buffers, and state_dict", "Layer initialization strategies", "Custom layers from scratch"],
+        code: `import torch
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, in_dim, hidden, out_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, hidden),
+            nn.BatchNorm1d(hidden),
+            nn.GELU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden, out_dim)
+        )
+        # Kaiming init for ReLU-like activations
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight)
+                nn.init.zeros_(m.bias)
+
+    def forward(self, x):
+        return self.net(x)
+
+model = MLP(784, 256, 10)
+x = torch.randn(32, 784)   # batch of 32
+out = model(x)              # shape: [32, 10]
+print(sum(p.numel() for p in model.parameters()), "params")`
+      },
+      {
+        num: "05",
+        name: "Training Loop & Optimization",
+        icon: "🔄",
+        topics: ["The canonical train loop", "Loss functions — CrossEntropy, MSE, BCE, Focal", "Optimizers — SGD, Adam, AdamW, Lion", "Learning rate schedulers — cosine, warmup", "Gradient clipping", "Mixed precision with torch.amp", "Epoch vs step-level scheduling"],
+        code: `import torch, torch.nn as nn
+from torch.cuda.amp import autocast, GradScaler
+
+model = MLP(784, 256, 10).to(device)
+opt   = torch.optim.AdamW(model.parameters(), lr=3e-4, weight_decay=0.01)
+sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=100)
+loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
+scaler  = GradScaler()  # for mixed precision
+
+for epoch in range(100):
+    model.train()
+    for X, y in train_loader:
+        opt.zero_grad()
+        with autocast():          # FP16 forward pass
+            logits = model(X)
+            loss   = loss_fn(logits, y)
+        scaler.scale(loss).backward()
+        scaler.unscale_(opt)
+        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        scaler.step(opt)
+        scaler.update()
+    sched.step()`
+      },
+      {
+        num: "06",
+        name: "Convolutional Networks (CNNs)",
+        icon: "🖼️",
+        topics: ["Convolution operation demystified", "Feature maps, filters, stride, padding", "Pooling — max, average, adaptive", "Building ResNet from scratch", "Skip connections and why they work", "Transfer learning with torchvision", "Data augmentation pipelines"],
+        code: `import torch.nn as nn
+
+class ResBlock(nn.Module):
+    def __init__(self, ch):
+        super().__init__()
+        self.conv1 = nn.Conv2d(ch, ch, 3, padding=1, bias=False)
+        self.bn1   = nn.BatchNorm2d(ch)
+        self.conv2 = nn.Conv2d(ch, ch, 3, padding=1, bias=False)
+        self.bn2   = nn.BatchNorm2d(ch)
+        self.act   = nn.GELU()
+
+    def forward(self, x):
+        out = self.act(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        return self.act(out + x)  # skip connection!
+
+# Transfer learning from pretrained weights
+import torchvision.models as M
+model = M.efficientnet_b0(weights='IMAGENET1K_V1')
+model.classifier[-1] = nn.Linear(1280, 5)  # finetune last layer`
+      },
+      {
+        num: "07",
+        name: "Recurrent Networks & Sequences",
+        icon: "🔁",
+        topics: ["RNN mechanics — hidden state, vanishing gradients", "LSTM: forget/input/output gates in detail", "GRU — lighter alternative", "Sequence-to-sequence architectures", "Packing padded sequences efficiently", "Bidirectional RNNs", "When to use RNN vs Transformer"],
+        code: `import torch, torch.nn as nn
+
+class Seq2Seq(nn.Module):
+    def __init__(self, vocab, embed_dim, hidden):
+        super().__init__()
+        self.embed = nn.Embedding(vocab, embed_dim, padding_idx=0)
+        self.lstm  = nn.LSTM(embed_dim, hidden,
+                             num_layers=2, dropout=0.3,
+                             batch_first=True, bidirectional=True)
+        self.proj  = nn.Linear(hidden * 2, vocab)
+
+    def forward(self, tokens):
+        # tokens: [B, T]
+        x, (h, c) = self.lstm(self.embed(tokens))
+        return self.proj(x)  # [B, T, vocab]`
+      }
+    ]
+  },
+  {
+    level: "Advanced",
+    badge: "badge-advanced",
+    color: "#a855f7",
+    duration: "4–6 weeks",
+    modules: [
+      {
+        num: "08",
+        name: "Transformers from Scratch",
+        icon: "🤖",
+        topics: ["Self-attention: Q, K, V projections", "Scaled dot-product attention derivation", "Multi-head attention — why multiple heads", "Positional encodings — sinusoidal & RoPE", "Encoder-only vs decoder-only vs encoder-decoder", "Building GPT-2 architecture", "Flash Attention & memory efficiency"],
+        code: `import torch, torch.nn as nn, math
+
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, n_heads):
+        super().__init__()
+        self.h, self.d = n_heads, d_model // n_heads
+        self.qkv = nn.Linear(d_model, 3 * d_model, bias=False)
+        self.out  = nn.Linear(d_model, d_model, bias=False)
+
+    def forward(self, x, mask=None):
+        B, T, C = x.shape
+        qkv = self.qkv(x).split(C, dim=-1)
+        Q, K, V = [t.view(B,T,self.h,self.d).transpose(1,2)
+                   for t in qkv]
+        # Scaled dot-product attention
+        scale = math.sqrt(self.d)
+        att = (Q @ K.transpose(-2,-1)) / scale
+        if mask is not None: att = att.masked_fill(mask==0, -1e9)
+        att = att.softmax(-1)
+        out = (att @ V).transpose(1,2).reshape(B, T, C)
+        return self.out(out)`
+      },
+      {
+        num: "09",
+        name: "Advanced Training Techniques",
+        icon: "🚀",
+        topics: ["Distributed training — DDP with multiple GPUs", "Gradient checkpointing to save memory", "LoRA & QLoRA — efficient fine-tuning", "Knowledge distillation", "Contrastive learning (SimCLR, CLIP)", "EMA (exponential moving average) of weights", "WandB logging and experiment tracking"],
+        code: `# LoRA: Low-Rank Adaptation
+import torch, torch.nn as nn
+
+class LoRALinear(nn.Module):
+    def __init__(self, base: nn.Linear, r=8, alpha=16):
+        super().__init__()
+        self.base  = base
+        d_in, d_out = base.in_features, base.out_features
+        self.A = nn.Parameter(torch.randn(d_in, r) * 0.01)
+        self.B = nn.Parameter(torch.zeros(r, d_out))
+        self.scale = alpha / r
+        # Freeze original weights
+        for p in base.parameters(): p.requires_grad = False
+
+    def forward(self, x):
+        return self.base(x) + self.scale * (x @ self.A @ self.B)
+
+# DDP in 3 lines:
+# dist.init_process_group('nccl')
+# model = DDP(model.cuda(), device_ids=[local_rank])`
+      },
+      {
+        num: "10",
+        name: "Generative Models",
+        icon: "🎨",
+        topics: ["VAE — ELBO derivation and reparameterization", "GAN training dynamics and mode collapse", "Diffusion models — forward process & DDPM", "Score matching and denoising", "Stable Diffusion architecture overview", "Flow matching (modern alternative)", "Sampling strategies — DDIM, DPM-Solver"],
+        code: `import torch, torch.nn as nn
+
+class VAE(nn.Module):
+    def __init__(self, x_dim=784, z_dim=32):
+        super().__init__()
+        # Encoder: x → (μ, log σ²)
+        self.enc   = nn.Sequential(nn.Linear(x_dim,256),nn.GELU())
+        self.mu    = nn.Linear(256, z_dim)
+        self.logv  = nn.Linear(256, z_dim)
+        # Decoder: z → x̂
+        self.dec = nn.Sequential(
+            nn.Linear(z_dim,256),nn.GELU(),nn.Linear(256,x_dim))
+
+    def reparameterize(self, mu, logv):
+        eps = torch.randn_like(mu)
+        return mu + eps * (0.5 * logv).exp()  # μ + ε·σ
+
+    def forward(self, x):
+        h      = self.enc(x)
+        mu, lv = self.mu(h), self.logv(h)
+        z      = self.reparameterize(mu, lv)
+        recon  = self.dec(z)
+        # ELBO = reconstruction + KL divergence
+        kl = -0.5 * (1 + lv - mu**2 - lv.exp()).sum(-1).mean()
+        return recon, kl`
+      }
+    ]
+  },
+  {
+    level: "Expert / Production",
+    badge: "badge-expert",
+    color: "#ee4b2b",
+    duration: "4–8 weeks",
+    modules: [
+      {
+        num: "11",
+        name: "Model Optimization & Inference",
+        icon: "⚙️",
+        topics: ["torch.compile — the new JIT", "TorchScript for production deployment", "Quantization: PTQ & QAT (int8, int4)", "Pruning — structured and unstructured", "ONNX export and runtime", "TensorRT integration", "Benchmarking and profiling with torch.profiler"],
+        code: `import torch
+
+model = MyModel().eval()
+
+# torch.compile — automatic kernel fusion
+compiled = torch.compile(model, mode='max-autotune')
+
+# Post-training quantization (int8)
+model_q = torch.quantization.quantize_dynamic(
+    model, {torch.nn.Linear}, dtype=torch.qint8)
+
+# ONNX export for cross-platform deployment
+dummy = torch.randn(1, 3, 224, 224)
+torch.onnx.export(model, dummy, "model.onnx",
+    input_names=["image"], output_names=["logits"],
+    dynamic_axes={"image": {0: "batch"}},
+    opset_version=17)
+
+# Profile to find bottlenecks
+with torch.profiler.profile(
+    activities=[torch.profiler.ProfilerActivity.CPU,
+                torch.profiler.ProfilerActivity.CUDA]
+) as prof:
+    for _ in range(10): model(dummy)
+print(prof.key_averages().table(sort_by="cuda_time_total"))`
+      },
+      {
+        num: "12",
+        name: "Research Engineering & Custom CUDA",
+        icon: "🧬",
+        topics: ["Writing custom autograd Functions", "CUDA kernels with torch.utils.cpp_extension", "Triton for GPU kernel programming", "Custom CUDA attention kernels", "Memory layout: contiguous, strides, views", "Debugging GPU memory leaks", "Publishing reproducible research code"],
+        code: `import torch
+from torch.autograd import Function
+
+# Custom backward pass — full control
+class StraightThroughEstimator(Function):
+    @staticmethod
+    def forward(ctx, x):
+        return x.sign()         # non-differentiable!
+
+    @staticmethod
+    def backward(ctx, grad_out):
+        return grad_out.clamp(-1, 1)  # pass gradient through
+
+sign = StraightThroughEstimator.apply
+
+# Triton kernel (GPU-native, faster than PyTorch)
+# import triton, triton.language as tl
+# @triton.jit
+# def relu_kernel(x_ptr, out_ptr, n, BLOCK: tl.constexpr):
+#     idx = tl.program_id(0)*BLOCK + tl.arange(0, BLOCK)
+#     x   = tl.load(x_ptr + idx, mask=idx<n, other=0.0)
+#     tl.store(out_ptr + idx, tl.maximum(x, 0), mask=idx<n)`
+      }
+    ]
+  }
+];
+
+const playgroundExamples = [
+  {
+    tab: "Tensors",
+    code: `<span class="kw">import</span> torch
+
+<span class="cm"># Create a 3×3 matrix filled with random values</span>
+x = torch.<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">3</span>)
+
+<span class="cm"># Element-wise operations are implicit</span>
+y = x * <span class="num">2</span> + <span class="num">1</span>      <span class="cm"># broadcasts scalar</span>
+z = x.<span class="fn">relu</span>()         <span class="cm"># max(0, x) element-wise</span>
+
+<span class="cm"># Matrix multiplication</span>
+result = x @ x.T  <span class="cm"># (3,3) @ (3,3) → (3,3)</span>
+
+print(<span class="str">f"Shape:  {x.shape}"</span>)
+print(<span class="str">f"dtype:  {x.dtype}"</span>)
+print(<span class="str">f"mean:   {x.mean():.4f}"</span>)
+print(<span class="str">f"std:    {x.std():.4f}"</span>)`,
+    output: `Shape:  torch.Size([3, 3])
+dtype:  torch.float32
+mean:   0.1247
+std:    0.9831`,
+    vis: "tensor3x3"
+  },
+  {
+    tab: "Autograd",
+    code: `<span class="kw">import</span> torch
+
+<span class="cm"># Build a computation graph</span>
+x = torch.tensor([<span class="num">2.0</span>, <span class="num">3.0</span>], requires_grad=<span class="kw">True</span>)
+W = torch.tensor([[<span class="num">1.0</span>, <span class="num">0.5</span>], [<span class="num">0.5</span>, <span class="num">2.0</span>]])
+
+<span class="cm"># Forward pass</span>
+h    = W @ x             <span class="cm"># linear transform</span>
+loss = (h - <span class="num">1</span>).<span class="fn">pow</span>(<span class="num">2</span>).<span class="fn">sum</span>()  <span class="cm"># MSE to target=1</span>
+
+<span class="cm"># Backward — compute all ∂loss/∂params</span>
+loss.<span class="fn">backward</span>()
+
+print(<span class="str">f"loss:   {loss.item():.4f}"</span>)
+print(<span class="str">f"∂L/∂x:  {x.grad}"</span>)`,
+    output: `loss:   8.5000
+∂L/∂x:  tensor([4.0000, 9.5000])`,
+    vis: "gradflow"
+  },
+  {
+    tab: "Training",
+    code: `<span class="kw">import</span> torch, torch.nn <span class="kw">as</span> nn
+
+<span class="cm"># A tiny classifier</span>
+model = nn.<span class="cls">Sequential</span>(
+    nn.<span class="cls">Linear</span>(<span class="num">2</span>, <span class="num">16</span>), nn.<span class="cls">ReLU</span>(),
+    nn.<span class="cls">Linear</span>(<span class="num">16</span>, <span class="num">2</span>)
+)
+opt     = torch.optim.<span class="cls">Adam</span>(model.parameters(), lr=<span class="num">1e-3</span>)
+loss_fn = nn.<span class="cls">CrossEntropyLoss</span>()
+
+<span class="cm"># Canonical 3-step training loop</span>
+<span class="kw">for</span> X, y <span class="kw">in</span> loader:
+    opt.<span class="fn">zero_grad</span>()          <span class="cm"># 1. reset grads</span>
+    loss = loss_fn(model(X), y)  <span class="cm"># 2. forward</span>
+    loss.<span class="fn">backward</span>()           <span class="cm"># 3. backward</span>
+    opt.<span class="fn">step</span>()                <span class="cm"># 4. update</span>`,
+    output: `Epoch  1  loss: 0.6842  acc: 54.3%
+Epoch  5  loss: 0.4721  acc: 78.1%
+Epoch 10  loss: 0.2934  acc: 88.6%
+Epoch 20  loss: 0.1203  acc: 95.2%
+Epoch 50  loss: 0.0312  acc: 98.9%`,
+    vis: "lossbar"
+  },
+  {
+    tab: "Transformer",
+    code: `<span class="kw">import</span> torch, torch.nn <span class="kw">as</span> nn, math
+
+<span class="kw">class</span> <span class="cls">Attention</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d, h):
+        super().__init__()
+        self.h = h; self.d = d // h
+        self.qkv = nn.<span class="cls">Linear</span>(d, <span class="num">3</span>*d, bias=<span class="kw">False</span>)
+        self.proj = nn.<span class="cls">Linear</span>(d, d, bias=<span class="kw">False</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        B, T, C = x.shape
+        Q,K,V = self.qkv(x).split(C,dim=-<span class="num">1</span>)
+        Q = Q.view(B,T,self.h,self.d).<span class="fn">transpose</span>(<span class="num">1</span>,<span class="num">2</span>)
+        K = K.view(B,T,self.h,self.d).<span class="fn">transpose</span>(<span class="num">1</span>,<span class="num">2</span>)
+        V = V.view(B,T,self.h,self.d).<span class="fn">transpose</span>(<span class="num">1</span>,<span class="num">2</span>)
+        att = (Q@K.<span class="fn">transpose</span>(-<span class="num">2</span>,-<span class="num">1</span>)) / math.sqrt(self.d)
+        out = att.<span class="fn">softmax</span>(-<span class="num">1</span>) @ V
+        <span class="kw">return</span> self.proj(out.<span class="fn">transpose</span>(<span class="num">1</span>,<span class="num">2</span>).<span class="fn">reshape</span>(B,T,C))`,
+    output: `Attention(d=256, heads=8)
+  Q shape: [8, 8, 16, 32]
+  K shape: [8, 8, 16, 32]
+  Att map: [8, 8, 16, 16]
+  Output:  [8, 16, 256]
+Params: 196,608`,
+    vis: "attnmap"
+  }
+];
+
+const cheatData = [
+  {
+    icon: "🔢", title: "Tensor Creation",
+    items: [
+      { desc: "From data", code: "torch.tensor([1,2,3])" },
+      { desc: "Zeros / Ones", code: "torch.zeros(3,4)" },
+      { desc: "Random normal", code: "torch.randn(2,3)" },
+      { desc: "Range", code: "torch.arange(0,10,2)" },
+      { desc: "Like existing", code: "torch.zeros_like(x)" },
+      { desc: "Linspace", code: "torch.linspace(0,1,100)" }
+    ]
+  },
+  {
+    icon: "🔧", title: "Tensor Operations",
+    items: [
+      { desc: "Matrix multiply", code: "A @ B  or  torch.mm(A,B)" },
+      { desc: "Element-wise", code: "x * y  /  x + y" },
+      { desc: "Reduce sum", code: "x.sum(dim=1, keepdim=True)" },
+      { desc: "Softmax", code: "x.softmax(dim=-1)" },
+      { desc: "Concat", code: "torch.cat([a,b], dim=0)" },
+      { desc: "Stack new dim", code: "torch.stack([a,b], dim=0)" }
+    ]
+  },
+  {
+    icon: "🏗️", title: "Common Layers",
+    items: [
+      { desc: "Fully connected", code: "nn.Linear(in, out)" },
+      { desc: "Convolution", code: "nn.Conv2d(c_in, c_out, k)" },
+      { desc: "Batch Norm", code: "nn.BatchNorm2d(channels)" },
+      { desc: "Dropout", code: "nn.Dropout(p=0.5)" },
+      { desc: "Embedding", code: "nn.Embedding(vocab, dim)" },
+      { desc: "LSTM", code: "nn.LSTM(input, hidden, layers)" }
+    ]
+  },
+  {
+    icon: "⚡", title: "Activations",
+    items: [
+      { desc: "ReLU", code: "nn.ReLU()  /  F.relu(x)" },
+      { desc: "GELU", code: "nn.GELU()  /  F.gelu(x)" },
+      { desc: "Sigmoid", code: "torch.sigmoid(x)" },
+      { desc: "Softmax", code: "F.softmax(x, dim=-1)" },
+      { desc: "SiLU/Swish", code: "nn.SiLU()  /  F.silu(x)" },
+      { desc: "Tanh", code: "torch.tanh(x)" }
+    ]
+  },
+  {
+    icon: "📉", title: "Loss Functions",
+    items: [
+      { desc: "Classification", code: "nn.CrossEntropyLoss()" },
+      { desc: "Regression", code: "nn.MSELoss()" },
+      { desc: "Binary classif.", code: "nn.BCEWithLogitsLoss()" },
+      { desc: "Huber / robust", code: "nn.HuberLoss(delta=1.0)" },
+      { desc: "KL Divergence", code: "nn.KLDivLoss(reduction='sum')" },
+      { desc: "Cosine embed.", code: "nn.CosineEmbeddingLoss()" }
+    ]
+  },
+  {
+    icon: "🚀", title: "Optimizers",
+    items: [
+      { desc: "AdamW (default)", code: "optim.AdamW(params, lr=3e-4)" },
+      { desc: "SGD + momentum", code: "optim.SGD(params, lr=0.1, momentum=0.9)" },
+      { desc: "Cosine schedule", code: "CosineAnnealingLR(opt, T_max)" },
+      { desc: "Linear warmup", code: "get_linear_schedule_with_warmup()" },
+      { desc: "Clip grads", code: "clip_grad_norm_(params, 1.0)" },
+      { desc: "Zero grads", code: "opt.zero_grad(set_to_none=True)" }
+    ]
+  }
+];
+
+const allTopics = [
+  {
+    section: "Foundations",
+    color: "#22c55e",
+    items: ["Tensor creation & dtypes","Broadcasting rules","In-place operations","Memory layout & strides","CPU vs GPU device management","requires_grad & computation graph","loss.backward() mechanics","torch.no_grad() / inference_mode","Gradient accumulation","Manual gradient checks"]
+  },
+  {
+    section: "Neural Network Modules",
+    color: "#3b82f6",
+    items: ["nn.Module subclassing","Custom forward() design","Parameter vs Buffer","state_dict save & load","nn.Sequential pipelines","Functional API (F.relu, etc.)","Layer initialization","Weight tying","Module hooks","Named modules & iteration"]
+  },
+  {
+    section: "Computer Vision",
+    color: "#a855f7",
+    items: ["Conv2d mechanics","Receptive field calculation","ResNet & skip connections","EfficientNet & compound scaling","Vision Transformer (ViT)","Object Detection — YOLO, DETR","Segmentation — U-Net, Mask R-CNN","Transfer learning & fine-tuning","torchvision transforms","Albumentations augmentation"]
+  },
+  {
+    section: "NLP & Sequence Models",
+    color: "#f97316",
+    items: ["Embeddings & tokenization","LSTM gating mechanism","Bidirectional RNNs","Attention mechanism","Transformer encoder/decoder","BERT pre-training objectives","GPT causal language modeling","Positional encodings (RoPE, ALiBi)","Byte-pair encoding (BPE)","HuggingFace integration"]
+  },
+  {
+    section: "Advanced Training",
+    color: "#ee4b2b",
+    items: ["Mixed precision (torch.amp)","Gradient checkpointing","DistributedDataParallel (DDP)","FSDP — sharded training","LoRA & QLoRA fine-tuning","Knowledge distillation","Contrastive learning","Curriculum learning","Label smoothing","Exponential moving average"]
+  },
+  {
+    section: "Production & Deployment",
+    color: "#06b6d4",
+    items: ["torch.compile","TorchScript & tracing","Post-training quantization","Quantization-aware training","Model pruning","ONNX export","TensorRT integration","torch.profiler","Memory profiling","Serving with TorchServe"]
+  }
+];
+
+// ── RENDER CURRICULUM ──────────────────────────────────────────────────────
+function buildCurriculum() {
+  const grid = document.getElementById('curriculumGrid');
+  curriculum.forEach((level, li) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.marginBottom = '1.5rem';
+
+    const header = document.createElement('div');
+    header.className = 'level-header';
+    header.innerHTML = `
+      <span class="level-badge ${level.badge}">${level.level}</span>
+      <span class="level-title">${level.level === 'Beginner' ? 'Foundations' : level.level === 'Intermediate' ? 'Core Deep Learning' : level.level === 'Advanced' ? 'Modern Architectures' : 'Production & Research'}</span>
+      <span class="level-meta">${level.modules.length} modules · ${level.duration}</span>
+      <span class="level-arrow">▼</span>
+    `;
+
+    const content = document.createElement('div');
+    content.className = 'level-content';
+    const modGrid = document.createElement('div');
+    modGrid.className = 'modules-grid';
+
+    level.modules.forEach((mod) => {
+      const card = document.createElement('div');
+      card.className = 'module-card';
+      card.innerHTML = `
+        <div class="module-icon">${mod.icon}</div>
+        <div class="module-num">// MODULE ${mod.num}</div>
+        <div class="module-name">${mod.name}</div>
+        <div class="module-topics">${mod.topics.slice(0,4).join(' · ')}</div>
+      `;
+      card.onclick = () => openModal(mod);
+      modGrid.appendChild(card);
+    });
+
+    content.appendChild(modGrid);
+    header.onclick = () => {
+      const isOpen = content.classList.contains('open');
+      content.classList.toggle('open', !isOpen);
+      header.querySelector('.level-arrow').style.transform = isOpen ? '' : 'rotate(180deg)';
+    };
+
+    // Open first level by default
+    if (li === 0) {
+      content.classList.add('open');
+      header.querySelector('.level-arrow') && setTimeout(() => {
+        header.querySelector('.level-arrow').style.transform = 'rotate(180deg)';
+      }, 50);
+    }
+
+    wrapper.appendChild(header);
+    wrapper.appendChild(content);
+    grid.appendChild(wrapper);
+  });
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────────
+function openModal(mod) {
+  document.getElementById('modalNum').textContent = `// MODULE ${mod.num}`;
+  document.getElementById('modalName').textContent = mod.name;
+  const ul = document.getElementById('modalTopics');
+  ul.innerHTML = mod.topics.map(t => `<li>${t}</li>`).join('');
+  document.getElementById('modalCode').textContent = mod.code;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').onclick = (e) => {
+  if (e.target === document.getElementById('modal')) closeModal();
+};
+
+// ── PLAYGROUND ────────────────────────────────────────────────────────────
+function buildPlayground() {
+  const tabs = document.getElementById('pgTabs');
+  playgroundExamples.forEach((ex, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'pg-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = ex.tab;
+    btn.onclick = () => {
+      document.querySelectorAll('.pg-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      showExample(ex);
+    };
+    tabs.appendChild(btn);
+  });
+  showExample(playgroundExamples[0]);
+}
+
+function showExample(ex) {
+  document.getElementById('codeDisplay').innerHTML = ex.code;
+  document.getElementById('outputText').textContent = ex.output;
+  const vis = document.getElementById('outputVis');
+  vis.innerHTML = '';
+  if (ex.vis === 'tensor3x3') renderTensorGrid(vis);
+  if (ex.vis === 'gradflow') renderGradFlow(vis);
+  if (ex.vis === 'lossbar') renderLossBar(vis);
+  if (ex.vis === 'attnmap') renderAttnMap(vis);
+}
+
+function renderTensorGrid(container) {
+  const values = Array.from({length:9}, () => (Math.random()*4-2).toFixed(2));
+  const maxV = Math.max(...values.map(Math.abs));
+  const grid = document.createElement('div');
+  grid.className = 'tensor-grid';
+  grid.style.gridTemplateColumns = 'repeat(3, 38px)';
+  for (let r=0;r<3;r++) {
+    const row = document.createElement('div');
+    row.className = 'tensor-row';
+    for (let c=0;c<3;c++) {
+      const v = parseFloat(values[r*3+c]);
+      const intensity = Math.abs(v)/maxV;
+      const cell = document.createElement('div');
+      cell.className = 'tensor-cell';
+      const h = v > 0 ? 120 : 0;
+      cell.style.background = `hsla(${h},70%,50%,${0.15+intensity*0.7})`;
+      cell.style.color = `hsl(${h},60%,${75+intensity*15}%)`;
+      cell.style.border = `1px solid hsla(${h},60%,50%,0.3)`;
+      cell.textContent = v > 0 ? values[r*3+c] : values[r*3+c];
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  }
+  const label = document.createElement('div');
+  label.style.cssText = 'font-family:Space Mono,monospace;font-size:11px;color:#6272a4;margin-top:8px;';
+  label.textContent = 'torch.randn(3,3) — hover cells';
+  container.appendChild(grid);
+  container.appendChild(label);
+}
+
+function renderGradFlow(container) {
+  const svg = `<svg width="240" height="120" viewBox="0 0 240 120" style="margin-top:12px">
+    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#50fa7b"/></marker></defs>
+    <rect x="10" y="45" width="50" height="28" rx="4" fill="rgba(88,166,255,0.15)" stroke="#3b82f6" stroke-width="1"/>
+    <text x="35" y="64" font-size="11" fill="#3b82f6" text-anchor="middle" font-family="Space Mono,monospace">x</text>
+    <line x1="60" y1="59" x2="90" y2="59" stroke="#50fa7b" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="90" y="45" width="60" height="28" rx="4" fill="rgba(168,85,247,0.15)" stroke="#a855f7" stroke-width="1"/>
+    <text x="120" y="64" font-size="10" fill="#a855f7" text-anchor="middle" font-family="Space Mono,monospace">W @ x</text>
+    <line x1="150" y1="59" x2="180" y2="59" stroke="#50fa7b" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="180" y="45" width="52" height="28" rx="4" fill="rgba(238,75,43,0.15)" stroke="#ee4b2b" stroke-width="1"/>
+    <text x="206" y="64" font-size="10" fill="#ee4b2b" text-anchor="middle" font-family="Space Mono,monospace">loss</text>
+    <text x="120" y="20" font-size="10" fill="#6272a4" text-anchor="middle" font-family="Space Mono,monospace">← gradient flows back</text>
+    <line x1="180" y1="45" x2="150" y2="30" stroke="#ee4b2b" stroke-dasharray="3,2" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="90" y1="45" x2="60" y2="30" stroke="#ee4b2b" stroke-dasharray="3,2" stroke-width="1" marker-end="url(#arr)"/>
+  </svg>`;
+  container.innerHTML = svg;
+}
+
+function renderLossBar(container) {
+  const losses = [0.6842, 0.4721, 0.2934, 0.1203, 0.0312];
+  const epochs = ['1','5','10','20','50'];
+  const svg = `<svg width="240" height="140" viewBox="0 0 240 140" style="margin-top:8px">
+    ${losses.map((v,i) => {
+      const w = Math.round(v * 220);
+      const y = 12 + i*24;
+      const g = Math.round((1-v)*200);
+      return `<rect x="40" y="${y}" width="${w}" height="16" rx="3" fill="rgba(${Math.round(v*255)},${g},50,0.5)" stroke="rgba(${Math.round(v*255)},${g},50,0.7)" stroke-width="1"/>
+      <text x="35" y="${y+12}" font-size="10" fill="#6272a4" text-anchor="end" font-family="Space Mono,monospace">E${epochs[i]}</text>
+      <text x="${43+w}" y="${y+12}" font-size="10" fill="#f8f8f2" font-family="Space Mono,monospace">${v}</text>`;
+    }).join('')}
+    <text x="120" y="135" font-size="10" fill="#6272a4" text-anchor="middle" font-family="Space Mono,monospace">training loss over epochs</text>
+  </svg>`;
+  container.innerHTML = svg;
+}
+
+function renderAttnMap(container) {
+  const size = 5;
+  const cells = [];
+  for (let i=0;i<size;i++) {
+    const row = [];
+    for (let j=0;j<size;j++) {
+      const v = i===j ? 0.6+Math.random()*0.3 : Math.random()*0.3;
+      row.push(v);
+    }
+    const s = row.reduce((a,b)=>a+b,0);
+    cells.push(row.map(v => v/s));
+  }
+  const cw = 32, ch = 32;
+  const rects = cells.map((row,i) =>
+    row.map((v,j) =>
+      `<rect x="${j*cw}" y="${i*ch}" width="${cw-1}" height="${ch-1}" rx="2"
+       fill="rgba(168,85,247,${v*0.9+0.05})" />`
+    ).join('')
+  ).join('');
+  const svg = `<svg width="${size*cw}" height="${size*ch+20}" viewBox="0 0 ${size*cw} ${size*ch+20}" style="margin-top:10px">${rects}
+    <text x="${size*cw/2}" y="${size*ch+16}" font-size="10" fill="#6272a4" text-anchor="middle" font-family="Space Mono,monospace">attention weights (5×5)</text>
+  </svg>`;
+  container.innerHTML = svg;
+}
+
+// ── CHEATSHEET ────────────────────────────────────────────────────────────
+function buildCheatsheet() {
+  const grid = document.getElementById('cheatGrid');
+  cheatData.forEach(cat => {
+    const card = document.createElement('div');
+    card.className = 'cheat-card';
+    card.innerHTML = `
+      <div class="cheat-header">
+        <span class="cheat-icon">${cat.icon}</span>
+        <span class="cheat-title">${cat.title}</span>
+      </div>
+      <div class="cheat-body">
+        ${cat.items.map(item => `
+          <div class="cheat-row">
+            <span class="cheat-desc">${item.desc}</span>
+            <code class="cheat-code">${item.code}</code>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── ALL TOPICS ────────────────────────────────────────────────────────────
+function buildTopics() {
+  const mega = document.getElementById('topicsMega');
+  allTopics.forEach(sec => {
+    const div = document.createElement('div');
+    div.className = 'topic-section';
+    div.innerHTML = `
+      <div class="topic-section-title">
+        <span style="color:${sec.color};font-family:Space Mono,monospace;font-size:14px">■</span>
+        ${sec.section}
+        <span>${sec.items.length} topics</span>
+      </div>
+      <div class="topics-list">
+        ${sec.items.map(t => `
+          <div class="topic-item" onclick="alert('Coming soon: full lesson on "${t}"')">
+            <div class="topic-dot" style="background:${sec.color}"></div>
+            ${t}
+          </div>
+        `).join('')}
+      </div>
+    `;
+    mega.appendChild(div);
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+buildCurriculum();
+buildPlayground();
+buildCheatsheet();
+buildTopics();
+</script>
+</body>
+</html>
